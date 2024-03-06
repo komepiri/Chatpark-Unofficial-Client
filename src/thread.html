@@ -1,0 +1,114 @@
+<html>
+<head>
+  <meta charset="UTF-8"/>
+  <!-- https://developer.mozilla.org/ja/docs/Web/HTTP/CSP -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://nieru.net; style-src 'self' 'unsafe-inline'; script-src 'self' https://nieru.net 'unsafe-inline';"/>
+  <title>Electron</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+<hr><hr>
+<a href="./index.html">スレ一覧</a><font color="#808080" size="1">スレ内情報: 総合:<span id="total"></span> 今日:<span id="today"></span> 昨日:<span id="yester"></span> 閲覧人数<span id="rom"></span></font>
+<hr>
+[<span id="Threadposturl"></span>] [<a href="">更新</a>]
+<hr><hr>
+<div id="threadres"></div>
+
+<script>
+    let url_string = window.location.href;
+    let url = new URL(url_string);
+    let param = url.searchParams.get("threadid");
+    console.log(param);
+
+
+    let viewXML = (xmlDocument) => {
+    //取得した文字列をコンソール出力
+    console.log(xmlDocument);
+
+    //XML形式に変換
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(xmlDocument, "text/xml");
+    let rss = doc.documentElement.getElementsByTagName("item");
+
+    //HTMLタグの作成
+    for(let i = rss.length - 1; i >= 0; i--){
+        let rssTitle = rss[i].getElementsByTagName("title")[0].textContent;
+        let rssPosttime = rss[i].getElementsByTagName("dc:date")[0].textContent;
+        let rssDescription  = rss[i].getElementsByTagName("description")[0].textContent;
+        let formattedTime = formatDate(rssPosttime);
+
+        const tagString = `${rssTitle}<br>${formattedTime}<br><br>${rssDescription}<hr>`;
+
+        document.body.insertAdjacentHTML('beforeend',tagString );
+    }
+};
+
+// 日時を指定されたフォーマットに変換する関数
+function formatDate(dateTimeString) {
+    const dateTime = new Date(dateTimeString);
+    const year = dateTime.getFullYear();
+    const month = String(dateTime.getMonth() + 1).padStart(2, '0');
+    const day = String(dateTime.getDate()).padStart(2, '0');
+    const hours = String(dateTime.getHours()).padStart(2, '0');
+    const minutes = String(dateTime.getMinutes()).padStart(2, '0');
+    const seconds = String(dateTime.getSeconds()).padStart(2, '0');
+
+    return `${year}/${month}/${day} ${hours}:${minutes}:${seconds}`;
+}
+
+const threadrss = `https://nieru.net/chatpark/${param}/rss`;
+fetch(threadrss)
+.then( response => response.text())
+.then( xmlData => viewXML(xmlData));
+
+// コメントURL用
+function threadpost() {
+    var threadposturltagid = document.getElementById('Threadposturl');
+    var threadposturlElement = document.createElement('a');
+    threadposturlElement.href = `./nm.html?threadid=${param}`;
+    threadposturlElement.textContent = 'コメント';
+    threadposturltagid.appendChild(threadposturlElement);
+}
+
+// NIERU APIからrom等取得
+
+document.addEventListener('DOMContentLoaded', () => {
+      getthreadinfo();
+      threadpost();
+    });
+
+function getthreadinfo() {
+        var url = 'https://nieru.net/api/v1.0/view.php?ids=chatpark';
+        fetch(url)
+        .then(function (data) {
+            console.log('fetch ok');
+            console.log(data.json)
+            return data.json();
+        })
+        .then(function (json) {
+            console.log(Object.keys(json.chatpark["threads"]).length - 1)
+            console.log(json)
+            for (var i = 0; i < Object.keys(json.chatpark["threads"]).length - 1; i++) {
+                if (json.chatpark.threads[i].id == param) {
+                    threadTotalac = json.chatpark.threads[i].access.total;
+                    threadTodayac = json.chatpark.threads[i].access.today;
+                    threadYesterdayac = json.chatpark.threads[i].access.yesterday;
+                    threadrom = json.chatpark.threads[i].access.rom;
+
+                    // アクセス数とかいろいろ
+                    var totalachtml = document.getElementById('total'); // total access
+                    var todayachtml = document.getElementById('today'); // today access
+                    var yesterachtml = document.getElementById('yester'); // yesterday access
+                    var romhtml = document.getElementById('rom'); // rom
+
+                    totalachtml.textContent = `${threadTotalac} `;
+                    todayachtml.textContent = `${threadTodayac} `;
+                    yesterachtml.textContent = `${threadYesterdayac} `;
+                    romhtml.textContent = `${threadrom} `;
+                    break;
+                }
+            }
+        }
+    )}
+</script>

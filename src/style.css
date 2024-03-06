@@ -1,0 +1,7 @@
+a:link   { color:#000080; }
+a:visited{ color:#FFA500; }
+
+body {
+    background-image: url("./background.jpeg");
+    background-repeat: repeat;
+    }
