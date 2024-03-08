@@ -37,6 +37,7 @@
         let rssPosttime = rss[i].getElementsByTagName("dc:date")[0].textContent;
         let rssDescription  = rss[i].getElementsByTagName("description")[0].textContent;
         let formattedTime = formatDate(rssPosttime);
+        console.log("tag create ok")
 
         const tagString = `${rssTitle}<br>${formattedTime}<br><br>${rssDescription}<hr>`;
 
