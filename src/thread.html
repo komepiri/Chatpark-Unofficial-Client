@@ -32,6 +32,7 @@
     let rss = doc.documentElement.getElementsByTagName("item");
     console.log(rss.length)
     //HTMLタグの作成
+    // 課題: rss.lengthがたまに0と返される TextContentがうまく機能しないときがある
     for(let i = rss.length - 1; i >= 0; i--){
         let rssTitle = rss[i].getElementsByTagName("title")[0].textContent;
         let rssPosttime = rss[i].getElementsByTagName("dc:date")[0].textContent;
