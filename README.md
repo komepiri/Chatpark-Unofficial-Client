@@ -6,5 +6,5 @@ Electronで作ったチャット広場の非公式クライアントです。<br
 
 現在の問題点:<br>
 1.thread.htmlの中のrssを取得し表示する際にrss.lengthの値が0になっていて正常に表示されない問題<br>
-2.thread.htmlのrssを取得し表示する際のタグ作成に失敗している(TextContentでエラーが発生している)
+2.thread.htmlのrssを取得し表示する際のタグ作成に失敗している(TextContentでエラーが発生している)<br>
 
