@@ -8,8 +8,9 @@
 </head>
 
 <body>
-<hr><hr>
+<hr>
 <a href="./index.html">スレ一覧</a><font color="#808080" size="1">スレ内情報: 総合:<span id="total"></span> 今日:<span id="today"></span> 昨日:<span id="yester"></span> 閲覧人数<span id="rom"></span></font>
+<b><div id="threadinfo"></div></b>
 <hr>
 [<span id="Threadposturl"></span>] [<a href="">更新</a>]
 <hr><hr>
@@ -97,17 +98,22 @@ function getthreadinfo() {
                     threadTodayac = json.chatpark.threads[i].access.today;
                     threadYesterdayac = json.chatpark.threads[i].access.yesterday;
                     threadrom = json.chatpark.threads[i].access.rom;
+                    threadName = json.chatpark.threads[i].title;
+                    threadrescount = json.chatpark.threads[i].res_count;
 
                     // アクセス数とかいろいろ
                     var totalachtml = document.getElementById('total'); // total access
                     var todayachtml = document.getElementById('today'); // today access
                     var yesterachtml = document.getElementById('yester'); // yesterday access
                     var romhtml = document.getElementById('rom'); // rom
+                    var ThreadInfoHTML = document.getElementById('threadinfo');
+
 
                     totalachtml.textContent = `${threadTotalac} `;
                     todayachtml.textContent = `${threadTodayac} `;
                     yesterachtml.textContent = `${threadYesterdayac} `;
                     romhtml.textContent = `${threadrom} `;
+                    ThreadInfoHTML.textContent = `┗${threadName} (${threadrescount})`;
                     break;
                 }
             }
